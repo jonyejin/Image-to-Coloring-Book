@@ -27,6 +27,31 @@ using namespace std;
 
 #include "CannyEdgeDetector.hpp"
 
+struct MyCoord {
+  int y;
+  int x;
+};
+
+// all islands data
+
+// islands array
+vector<vector<pair<int, int>>> island_index;
+// bounding box array
+// 0, 1, 2, 3π¯¬∞ø° ∞¢∞¢ pair∞° µÈæÓ¿÷¥Ÿ.
+vector<vector<pair<int, int>>> bounding_box_index;
+// number of islands
+int island_count = 0;
+// possibilities : {0: ø¯, 1: 1≤¿¡˛¡° ªÔ∞¢«¸, 2: 2≤¿¡˛¡°+«—∫Ø ªÔ∞¢«¸, 3: ¡˜∞¢ ªÔ∞¢«¸, 4: ±◊ ø‹ («ÿ¥Áæ¯æÓæﬂ ¡§ªÛ), -1: »ÆΩ«»˜ æ»µ , -2: initialize}
+vector<int> island_possibilities;
+/// 0, 1, 2, 3π¯¬∞ ƒ≠ø° ƒ⁄≥ ∞° ¿÷¿∏∏È 1, æ¯¿∏∏È 0
+vector<vector<int>> corner_possibilities;
+/// ƒ⁄≥ µÈ¿« ¡¬«•
+vector<vector<pair<int, int>>> corners;
+
+Vec3b white = Vec3b(0, 0, 0);
+
+float PI = 3.141592;
+
 CannyEdgeDetector::CannyEdgeDetector()
 {
   width = (unsigned int) 0;
@@ -64,26 +89,42 @@ uint8_t* CannyEdgeDetector::ProcessImage(uint8_t* source_bitmap, unsigned int wi
    */
   this->Luminance();
 
+//  Mat rgb(height, width, CV_8UC3, source_bitmap);
+//  imshow("black_and_grey", rgb);
+  
   /*
    * "Widening" image. At this step we already need to know the size of
    * gaussian mask.
    */
   this->PreProcessImage(sigma);
+  
+  Mat widening(height, width, CV_8UC3, source_bitmap);
+  imshow("after_widening", widening);
 
   /*
    * Noise reduction - Gaussian filter.
    */
   this->GaussianBlur(sigma);
+  
+  Mat gaussian(height, width, CV_8UC3, workspace_bitmap);
+  imshow("after_GaussianBlur", gaussian);
+  
 
   /*
    * Edge detection - Sobel filter.
    */
   this->EdgeDetection();
+  
+  Mat sobel(height, width, CV_8UC3, edge_magnitude);
+  imshow("after_sobel_filter", sobel);
 
   /*
    * Suppression of non maximum pixels.
    */
   this->NonMaxSuppression();
+  
+  Mat non_max_supp(height, width, CV_8UC3, workspace_bitmap);
+  imshow("after_non_max_supp", non_max_supp);
 
   /*
    * Hysteresis thresholding.
@@ -97,6 +138,8 @@ uint8_t* CannyEdgeDetector::ProcessImage(uint8_t* source_bitmap, unsigned int wi
 
   return source_bitmap;
 }
+
+
 
 inline uint8_t CannyEdgeDetector::GetPixelValue(unsigned int x, unsigned int y)
 {
@@ -499,9 +542,141 @@ void CannyEdgeDetector::HysteresisRecursion(long x, long y, uint8_t lowThreshold
   }
 }
 
+bool is_color(cv::Mat& img, int row, int col) {
+  // ªÁ¿Ã¡Ó »Æ¿Œ«œ±‚
+  if (img.rows <= row) {
+    return false;
+  }
+  if (img.cols <= col) {
+    return false;
+  }
+
+  if (img.at<Vec3b>(row, col) != white) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void bfs(cv::Mat& img, int i, int j) {
+  queue<MyCoord> q;
+  int width = img.cols, height = img.rows;;
+
+  if (size(island_index) <= island_count) {
+    vector<pair<int, int>> new_island;
+    island_index.push_back(new_island);
+  }
+
+
+  q.push(MyCoord{ i, j });
+  island_index[island_count].push_back(make_pair(i, j));
+  img.at<Vec3b>(i, j) = white;
+
+  int dx[4] = { 0, 1, 0, -1 };
+  int dy[4] = { 1, 0, -1, 0 };
+  while (!q.empty()) {
+    MyCoord curPair = q.front();
+    q.pop();
+
+    for (int k = 0; k < 4; k++) {
+      int nextX = curPair.x + dx[k];
+      int nextY = curPair.y + dy[k];
+      if (0 <= nextX && nextX < width && 0 <= nextY && nextY < height) {
+        pair<int, int> nextPair = make_pair(nextY, nextX);
+        if (is_color(img, nextPair.first, nextPair.second)) {
+          q.push(MyCoord{ nextPair.first, nextPair.second });
+          island_index[island_count].push_back(make_pair(nextPair.first, nextPair.second));
+          img.at<Vec3b>(nextPair.first, nextPair.second) = white;
+        }
+      }
+
+    }
+  }
+}
+
+void printIslands() {
+  for (int i = 0; i < island_index.size(); i++) {
+    printf("%d: ", i);
+    for (int j = 0; j < island_index[i].size(); j++) {
+//      std::cout << island_index.at(i).at(j).first << ' ';
+//      std::cout << island_index.at(i).at(j).second << ' ' << '\n';
+    }
+    printf("\n");
+  }
+}
+
+
+bool smallPairFirst(std::pair<int, int> p1, std::pair<int, int> p2) {
+    return p1.first < p2.first;
+}
+
+
+bool smallPairSecond(std::pair<int, int> p1, std::pair<int, int> p2) {
+    return p1.second < p2.second;
+}
+
+
+bool largePairFirst(std::pair<int, int> p1, std::pair<int, int> p2) {
+    return p1.first > p2.first;
+}
+
+
+bool largePairSecond(std::pair<int, int> p1, std::pair<int, int> p2) {
+    return p1.second > p2.second;
+}
+
+void findBoundingBoxes() {
+  for (int i = 0; i < island_count; i++) {
+    vector<pair<int, int>> bounding_box_init;
+    bounding_box_index.push_back(bounding_box_init);
+
+    // min_row
+    auto min_row = *min_element(island_index[i].begin(), island_index[i].end(), smallPairFirst);
+    int min_row_value = min_row.first;
+    //    printf("%d\n", min_row_value);
+
+      // max_row
+    auto max_row = *min_element(island_index[i].begin(), island_index[i].end(), largePairFirst);
+    int max_row_value = max_row.first;
+    //    printf("%d\n", max_row_value);
+
+      // min_col
+    auto min_col = *min_element(island_index[i].begin(), island_index[i].end(), smallPairSecond);
+    int min_col_value = min_col.second;
+    //    printf("%d\n", min_col_value);
+
+      // max_col
+    auto max_col = *min_element(island_index[i].begin(), island_index[i].end(), largePairSecond);
+    int max_col_value = max_col.second;
+    //    printf("%d\n", max_col_value);
+
+      // add to array
+    bounding_box_index[i].push_back(make_pair(min_row_value, min_col_value));
+    bounding_box_index[i].push_back(make_pair(min_row_value, max_col_value));
+    bounding_box_index[i].push_back(make_pair(max_row_value, min_col_value));
+    bounding_box_index[i].push_back(make_pair(max_row_value, max_col_value));
+  }
+  return;
+}
+
+void printBoundingBoxes() {
+  for (int i = 0; i < bounding_box_index.size(); i++) {
+    printf("º∂ %d: ", i);
+    for (int j = 0; j < bounding_box_index[i].size(); j++) {
+      std::cout << bounding_box_index[i][j].first << ' ';
+      std::cout << bounding_box_index.at(i).at(j).second << ' ' << '\n';
+
+    }
+    printf("\n");
+  }
+}
+
+
+
 int main(){
   printf("hello");
-  Mat originalImage = imread("/Users/yejin/Image-to-Coloring-Book/mac_xcode/coloring_book_generation/coloring_book_generation/puang_pic.jpg"); //자신이 저장시킨 이미지
+  Mat originalImage = imread("/Users/yejin/Image-to-Coloring-Book/mac_xcode/coloring_book_generation/coloring_book_generation/puang_lineart.jpg"); //자신이 저장시킨 이미지
   int row = originalImage.rows;
   int col = originalImage.cols;
   int imageSize = row * col * originalImage.channels();
@@ -512,8 +687,57 @@ int main(){
   CannyEdgeDetector *canny = new CannyEdgeDetector();
   uint8_t *output = canny->ProcessImage(source_bitmap, col, row, 1.0F, 1, 80);
   
-  Mat rgb(row, col, CV_8UC3, output);
-  imshow("rgb", rgb);
+  Mat after_canny(row, col, CV_8UC3, output);
+  imshow("after_canny", after_canny);
+  
+  cv::Mat img = after_canny.clone();
+  
+  // 지난번 과제에서 만든 코드 써보기
+  //    find the first pixel to start
+  for (int row = 0; row < img.rows; row++)
+  {
+    for (int col = 0; col < img.cols; col++)
+    {
+      // printf("%d, %d\n", row, col);
+      if (is_color(img, row, col)) {
+        // printf("color!\n");
+        // yejin 2022-11-03 4 o'clock : testing bfs
+        // dfs(img, row, col);
+        bfs(img, row, col);
+        island_count += 1;
+      }
+    }
+  }
+
+  //  imshow("img", img);
+  printf("island_count: %d\n", island_count);
+//  printIslands();
+
+    // bounding box ±∏«œ±‚
+  findBoundingBoxes();
+  printBoundingBoxes();
+  
+//
+//  int height = after_canny.rows;
+//  int width = after_canny.cols;
+//  // turn black <-> white reverse
+//  for (int kernel_i=0; kernel_i < height; kernel_i++){
+//    for (int kernel_j=0; kernel_j < width; kernel_j++){
+//
+//      if (after_canny.at<uint8_t>(kernel_i, kernel_j) == 0){
+//        after_canny.at<cv::Vec3b>(kernel_i, kernel_j)[0] = 255;
+//        after_canny.at<cv::Vec3b>(kernel_i, kernel_j)[1] = 255;
+//        after_canny.at<cv::Vec3b>(kernel_i, kernel_j)[2] = 255;
+//      } else if (after_canny.at<uint8_t>(kernel_i, kernel_j) == 255){
+//        after_canny.at<cv::Vec3b>(kernel_i, kernel_j)[0] = 0;
+//        after_canny.at<cv::Vec3b>(kernel_i, kernel_j)[1] = 0;
+//        after_canny.at<cv::Vec3b>(kernel_i, kernel_j)[2] = 0;
+//      } else {
+//        printf("@!!!!!\n");
+//      }
+//    }
+//  }
+  imshow("rgb", after_canny);
   waitKey(0);
   
   printf("끝!");

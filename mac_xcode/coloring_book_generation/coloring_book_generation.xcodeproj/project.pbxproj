@@ -63,7 +63,7 @@
 		68F75E54292618ED009D64F5 /* libopencv_flann.4.6.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F75E1C292618EC009D64F5 /* libopencv_flann.4.6.0.dylib */; };
 		68F75E55292618ED009D64F5 /* libopencv_xphoto.4.6.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F75E1D292618EC009D64F5 /* libopencv_xphoto.4.6.0.dylib */; };
 		68F75E56292618ED009D64F5 /* libopencv_ximgproc.4.6.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F75E1E292618ED009D64F5 /* libopencv_ximgproc.4.6.0.dylib */; };
-		68F75E5F292618FD009D64F5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F75E58292618F9009D64F5 /* main.cpp */; };
+		68F75E6129261EBF009D64F5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F75E6029261EBF009D64F5 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -79,6 +79,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		68E36DC32929DD7C00CB1E7D /* quiz-area.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "quiz-area.jpg"; sourceTree = "<group>"; };
 		68F75DDC2926184F009D64F5 /* coloring_book_generation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = coloring_book_generation; sourceTree = BUILT_PRODUCTS_DIR; };
 		68F75DE6292618A8009D64F5 /* libopencv_gapi.4.6.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_gapi.4.6.0.dylib; sourceTree = "<group>"; };
 		68F75DE7292618AA009D64F5 /* libopencv_img_hash.4.6.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_img_hash.4.6.0.dylib; sourceTree = "<group>"; };
@@ -137,11 +138,11 @@
 		68F75E1C292618EC009D64F5 /* libopencv_flann.4.6.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_flann.4.6.0.dylib; sourceTree = "<group>"; };
 		68F75E1D292618EC009D64F5 /* libopencv_xphoto.4.6.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_xphoto.4.6.0.dylib; sourceTree = "<group>"; };
 		68F75E1E292618ED009D64F5 /* libopencv_ximgproc.4.6.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_ximgproc.4.6.0.dylib; sourceTree = "<group>"; };
-		68F75E58292618F9009D64F5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../../ColoringBookGeneration/ColoringBookGeneration/main.cpp; sourceTree = "<group>"; };
 		68F75E59292618FA009D64F5 /* puang_lineart.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = puang_lineart.jpg; sourceTree = "<group>"; };
 		68F75E5A292618FB009D64F5 /* puang_pic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = puang_pic.jpg; sourceTree = "<group>"; };
 		68F75E5C292618FD009D64F5 /* puang_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = puang_background.png; sourceTree = "<group>"; };
 		68F75E5D292618FD009D64F5 /* CannyEdgeDetector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CannyEdgeDetector.hpp; sourceTree = "<group>"; };
+		68F75E6029261EBF009D64F5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,9 +233,10 @@
 			children = (
 				68F75DF4292618D3009D64F5 /* coloring_book_generation.entitlements */,
 				68F75E5D292618FD009D64F5 /* CannyEdgeDetector.hpp */,
-				68F75E58292618F9009D64F5 /* main.cpp */,
+				68F75E6029261EBF009D64F5 /* main.cpp */,
 				68F75E5C292618FD009D64F5 /* puang_background.png */,
 				68F75E59292618FA009D64F5 /* puang_lineart.jpg */,
+				68E36DC32929DD7C00CB1E7D /* quiz-area.jpg */,
 				68F75E5A292618FB009D64F5 /* puang_pic.jpg */,
 				68F75E11292618EA009D64F5 /* libopencv_alphamat.4.6.0.dylib */,
 				68F75DF1292618CE009D64F5 /* libopencv_aruco.4.6.0.dylib */,
@@ -353,7 +355,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				68F75E5F292618FD009D64F5 /* main.cpp in Sources */,
+				68F75E6129261EBF009D64F5 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
