@@ -748,6 +748,7 @@ void noiseFilter(Mat& mat, int threshold) {
             // 색깔 반전하기
             if (mat.at<Vec3b>(r, c) == black){
               mat.at<Vec3b>(r, c) = white;
+              
             } else if (mat.at<Vec3b>(r, c) == white){
               mat.at<Vec3b>(r, c) = black;
             } else {
@@ -864,9 +865,10 @@ int main() {
         }
     }
     printf("island_count: %d\n", island_count);
-//    printIslands();
+    printIslands();
+    imshow("before_noise_filter", sumMat);
 
-    noiseFilter(sumMat, 15);
+    noiseFilter(sumMat, 100);
     imshow("after_noise_filter", sumMat);
   
     blackAndWhiteReverse(sumMat);
