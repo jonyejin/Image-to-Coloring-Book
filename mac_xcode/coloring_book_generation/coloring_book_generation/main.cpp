@@ -35,6 +35,7 @@ struct MyCoord {
 
 
 vector<vector<pair<int, int>>> island_index;
+vector<vector<pair<int, int>>> filtered_island_index;
 vector<vector<pair<int, int>>> corner_index;
 vector<vector<pair<int, int>>> bounding_box_index;
 int island_count = 0;
@@ -736,21 +737,27 @@ void saveImage(Mat& mat, int type, string path) {
 }
 
 
+// island를 돌면서, threshold보다 개수가 작으면 색깔 반전해준다.
 void noiseFilter(Mat& mat, int threshold) {
-    //for (int i = 0; i < island_index.size(); i++) {
-    //    if (threshold > island_index[i].size()) {
-    //        /*cout << i << " : " << island_index[i].size() << endl;
-    //        for (int j = 0; j < island_index[i].size(); j++) {
-    //            std::cout << island_index.at(i).at(j).first << ' ';
-    //            std::cout << island_index.at(i).at(j).second << ' ';
-    //            Vec3b v = mat.at<Vec3b>(island_index.at(i).at(j).first, island_index.at(i).at(j).second);
-    //            printf("%d, %d, %d\n", v[0], v[1], v[2]);
-    //        }*/
-    //        for (int j = 0; i < island_index[i].size(); j++) {
-    //            mat.at<Vec3b>(island_index.at(i).at(j).first, island_index.at(i).at(j).second) = Vec3b(0, 0, 0);
-    //        }
-    //    }
-    //}
+    for (int i = 0; i < island_index.size(); i++) {
+        if (threshold > island_index[i].size()) {
+          for (int j = 0; j < island_index[i].size(); j++) {
+            int r = island_index.at(i).at(j).first;
+            int c =  island_index.at(i).at(j).second;
+            
+            // 색깔 반전하기
+            if (mat.at<Vec3b>(r, c) == black){
+              mat.at<Vec3b>(r, c) = white;
+            } else if (mat.at<Vec3b>(r, c) == white){
+              mat.at<Vec3b>(r, c) = black;
+            } else {
+              
+            }
+          }
+        } else {
+          
+        }
+    }
 }
 
 
@@ -835,9 +842,6 @@ int main() {
     }
 
     Mat sumMat(row, col, CV_8UC3, sum_output);
-    blackAndWhiteReverse(sumMat);
-    imshow("sum", sumMat);
-
     saveImage(sumMat, 0, "result_sum.png");
     cout << "here";
     /*CannyEdgeDetector* canny = new CannyEdgeDetector(0);
@@ -860,12 +864,14 @@ int main() {
         }
     }
     printf("island_count: %d\n", island_count);
-    printIslands();
+//    printIslands();
 
-    /*noiseFilter(sumMat, 15);
-    saveImage(sumMat, 0, "result_sum_noise.png");*/
+    noiseFilter(sumMat, 15);
+    imshow("after_noise_filter", sumMat);
+  
+    blackAndWhiteReverse(sumMat);
+    imshow("reverse", sumMat);
        
-   //imshow("rgb", after_canny);
     waitKey(0);
 
     printf("≥°!");
