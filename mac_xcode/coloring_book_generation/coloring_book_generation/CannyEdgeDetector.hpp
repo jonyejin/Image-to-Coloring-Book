@@ -228,6 +228,7 @@ private:
    * \param lowThreshold Lower threshold of hysteresis (from range of 0-255).
    */
   void HysteresisRecursion(long x, long y, uint8_t lowThreshold);
+  
 };
 
 #endif // #ifndef _CANNYEDGEDETECTOR_H_

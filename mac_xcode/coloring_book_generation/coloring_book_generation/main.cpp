@@ -43,7 +43,8 @@ vector<int> island_possibilities;
 vector<vector<int>> corner_possibilities;
 vector<vector<pair<int, int>>> corners;
 
-Vec3b white = Vec3b(0, 0, 0);
+Vec3b black = Vec3b(0, 0, 0);
+Vec3b white = Vec3b(255, 255, 255);
 float PI = 3.141592;
 
 
@@ -142,7 +143,7 @@ uint8_t* CannyEdgeDetector::ProcessImage(uint8_t* source_bitmap, unsigned int wi
 
   return source_bitmap;
 }
-inline uint8_t CannyEdgeDetector::GetPixelValue(unsigned int x, unsigned int y)
+uint8_t CannyEdgeDetector::GetPixelValue(unsigned int x, unsigned int y)
 {
     return (uint8_t) * (workspace_bitmap + (unsigned long)(x * width + y));
 }
@@ -580,7 +581,7 @@ bool is_color(cv::Mat& img, int row, int col) {
         return false;
     }
 
-    if (img.at<Vec3b>(row, col) != white) {
+    if (img.at<Vec3b>(row, col) != black) {
         return true;
     }
     else {
@@ -602,7 +603,7 @@ void bfs(cv::Mat& img, int i, int j) {
 
     q.push(MyCoord{ i, j });
     island_index[island_count].push_back(make_pair(i, j));
-    img.at<Vec3b>(i, j) = white;
+    img.at<Vec3b>(i, j) = black;
 
     int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1};
     int dy[8] = { 1, 0, -1, 0, 1, -1, -1, 1 };
@@ -620,7 +621,7 @@ void bfs(cv::Mat& img, int i, int j) {
                     flag = true;
                     q.push(MyCoord{ nextPair.first, nextPair.second });
                     island_index[island_count].push_back(make_pair(nextPair.first, nextPair.second));
-                    img.at<Vec3b>(nextPair.first, nextPair.second) = white;
+                    img.at<Vec3b>(nextPair.first, nextPair.second) = black;
                 }
             }
         }
@@ -734,6 +735,7 @@ void saveImage(Mat& mat, int type, string path) {
     imwrite(path, cur);
 }
 
+
 void noiseFilter(Mat& mat, int threshold) {
     //for (int i = 0; i < island_index.size(); i++) {
     //    if (threshold > island_index[i].size()) {
@@ -749,6 +751,20 @@ void noiseFilter(Mat& mat, int threshold) {
     //        }
     //    }
     //}
+}
+
+
+void blackAndWhiteReverse(cv::Mat& mat){
+  for (int r = 0;  r< mat.rows; r++) {
+      for (int c = 0; c < mat.cols; c++) {
+        if (mat.at<Vec3b>(r, c) == black){
+          mat.at<Vec3b>(r, c) = white;
+        } else {
+          mat.at<Vec3b>(r, c) = black;
+        }
+    }
+  }
+  return;
 }
 
 int main() {
@@ -819,6 +835,7 @@ int main() {
     }
 
     Mat sumMat(row, col, CV_8UC3, sum_output);
+    blackAndWhiteReverse(sumMat);
     imshow("sum", sumMat);
 
     saveImage(sumMat, 0, "result_sum.png");
