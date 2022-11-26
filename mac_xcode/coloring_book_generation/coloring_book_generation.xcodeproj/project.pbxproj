@@ -79,6 +79,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6820165C292B8DCA004AAEB5 /* easy-quiz-area.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "easy-quiz-area.jpg"; sourceTree = "<group>"; };
 		68E36DC32929DD7C00CB1E7D /* quiz-area.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "quiz-area.jpg"; sourceTree = "<group>"; };
 		68F75DDC2926184F009D64F5 /* coloring_book_generation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = coloring_book_generation; sourceTree = BUILT_PRODUCTS_DIR; };
 		68F75DE6292618A8009D64F5 /* libopencv_gapi.4.6.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libopencv_gapi.4.6.0.dylib; sourceTree = "<group>"; };
@@ -234,6 +235,7 @@
 				68F75DF4292618D3009D64F5 /* coloring_book_generation.entitlements */,
 				68F75E5D292618FD009D64F5 /* CannyEdgeDetector.hpp */,
 				68F75E6029261EBF009D64F5 /* main.cpp */,
+				6820165C292B8DCA004AAEB5 /* easy-quiz-area.jpg */,
 				68F75E5C292618FD009D64F5 /* puang_background.png */,
 				68F75E59292618FA009D64F5 /* puang_lineart.jpg */,
 				68E36DC32929DD7C00CB1E7D /* quiz-area.jpg */,
